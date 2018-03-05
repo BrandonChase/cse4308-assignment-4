@@ -1,3 +1,10 @@
+/**
+ * @author Brandon Chase, based on code by James Spargo
+ * 
+ * This is the AiPlayer class.  It simulates a minimax player for the max
+ * connect four game.
+ */
+
 public class AIPlayer {
 	//class fields
 	public int playerNumber;

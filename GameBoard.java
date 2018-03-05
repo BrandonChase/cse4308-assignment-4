@@ -32,40 +32,44 @@ public class GameBoard implements Cloneable {
 		board = new int[NUM_ROWS][NUM_COLS];
 		numPieces = 0;
 		
-		//Open input file
-		BufferedReader input = new BufferedReader(new FileReader(inputFileName));
-		
-		//Read game data
-		ArrayList<String> data = new ArrayList<String>();
-		String line = null;
-		while((line = input.readLine()) != null) { 
-			data.add(line); 
-		}
-		input.close();
-		
-		//Set board values
-		for(int row = 0; row < NUM_ROWS; row++) {
-			String currentLine = data.get(row);
+		try {
+			//Open input file
+			BufferedReader input = new BufferedReader(new FileReader(inputFileName));
 			
-			for(int col = 0; col < NUM_COLS; col++) {
-				int value = Character.getNumericValue(currentLine.charAt(col));
+			//Read game data
+			ArrayList<String> data = new ArrayList<String>();
+			String line = null;
+			while((line = input.readLine()) != null) { 
+				data.add(line); 
+			}
+			input.close();
+			
+			//Set board values
+			for(int row = 0; row < NUM_ROWS; row++) {
+				String currentLine = data.get(row);
 				
-				if(value == 0 || value == 1 || value ==2) {
-					board[row][col] = value;
-				} else {
-					throw new Exception("Invalid value at block [" + row + ", " + col + "].\n");
-				}
-				
-				if(value != 0) {
-					numPieces++;
+				for(int col = 0; col < NUM_COLS; col++) {
+					int value = Character.getNumericValue(currentLine.charAt(col));
+					
+					if(value == 0 || value == 1 || value ==2) {
+						board[row][col] = value;
+					} else {
+						throw new Exception("Invalid value at block [" + row + ", " + col + "].\n");
+					}
+					
+					if(value != 0) {
+						numPieces++;
+					}
 				}
 			}
-		}
-		
-		//Get whose turn it is (last line in data)
-		turnNum = Integer.parseInt(data.get(data.size() - 1));
-		if(turnNum != 1 && turnNum != 2) { 
-			throw new Exception("Invalid turn value at block.\n"); 
+			
+			//Get whose turn it is (last line in data)
+			turnNum = Integer.parseInt(data.get(data.size() - 1));
+			if(turnNum != 1 && turnNum != 2) { 
+				throw new Exception("Invalid turn value at block.\n"); 
+			}
+		} catch(Exception e) { //Error opening file. board is already initialized and numPieces = 0, so just need to initialize turnNum = 1 to start game from clean slate.
+			turnNum = 1;
 		}
 	}
 	
@@ -283,7 +287,6 @@ public class GameBoard implements Cloneable {
 		
 		//save next turn
 		output.write(String.valueOf(turnNum));
-		output.newLine();
 		
 		//close output file
 		output.close();

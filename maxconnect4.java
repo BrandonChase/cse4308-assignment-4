@@ -28,8 +28,6 @@ import java.util.Scanner;
  *  
  *  [ search depth ]
  *  -- the depth of the minimax search algorithm
- * 
- *   
  */
 
 public class maxconnect4 {
