@@ -52,18 +52,14 @@ public class maxconnect4 {
 			GameBoard currentGame = new GameBoard(inputFileName);
 			
 			//Play specified mode 
-			switch(gameMode.toLowerCase()) {
-			case "interactive":
+			if(gameMode.equalsIgnoreCase("interactive")) {
 				String startingPlayer = args[2].toString();
 				playInteractiveMode(currentGame, startingPlayer, depth);
-				break;
-			case "one-move":
+			} else if(gameMode.equalsIgnoreCase("one-move")) {
 				String outputFileName = args[2].toString();
 				playOneMoveMode(currentGame, outputFileName, depth);
-				break;
-			default:
+			} else {
 				System.out.println("ERROR: '" + gameMode + "' is an unsupported game mode! Try again.");
-				break;
 			}
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
@@ -109,7 +105,7 @@ public class maxconnect4 {
 		currentGame.print();
 		if(!currentGame.isGameOver()) {
 			AIPlayer ai = new AIPlayer(currentGame.getCurrentTurn(), depth);
-			ai.calculateBestPlay(currentGame);
+			currentGame.playPiece(ai.calculateBestPlay(currentGame));
 			currentGame.print();
 		}
 		

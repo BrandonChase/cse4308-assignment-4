@@ -19,7 +19,7 @@ public class AIPlayer {
 		}
 		
 		Node root = new Node(currentGame, 0, -1);
-		int bestValue = maxValue(root, -999_999, 999_9995);
+		int bestValue = maxValue(root, -999999, 999999);
 		for(Node successor : root.successors ) {
 			if(successor.value == bestValue)
 			{
@@ -37,7 +37,7 @@ public class AIPlayer {
 			return node.value;
 		}
 		
-		int value = -999_999;
+		int value = -999999;
 		node.successors = node.getSuccessors();
 		for(Node successor : node.successors) {
 			value = Math.max(value, minValue(successor, alpha, beta));
@@ -58,7 +58,7 @@ public class AIPlayer {
 			return node.value;
 		}
 		
-		int value = 999_999;
+		int value = 999999;
 		node.successors = node.getSuccessors();
 		for(Node successor : node.successors) {
 			value = Math.min(value, maxValue(successor, alpha, beta));

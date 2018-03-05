@@ -36,7 +36,7 @@ public class GameBoard implements Cloneable {
 		BufferedReader input = new BufferedReader(new FileReader(inputFileName));
 		
 		//Read game data
-		ArrayList<String> data = new ArrayList<>();
+		ArrayList<String> data = new ArrayList<String>();
 		String line = null;
 		while((line = input.readLine()) != null) { 
 			data.add(line); 
@@ -127,7 +127,7 @@ public class GameBoard implements Cloneable {
 		
 		for(int row = 0; row < NUM_ROWS; row++) {
 			for(int col = 0; col < NUM_COLS; col++) {
-				ArrayList<Integer> values = new ArrayList<>();
+				ArrayList<Integer> values = new ArrayList<Integer>();
 				
 				//-----check horizontal (3 spaces to right of current space)------
 				if(col + 3 < NUM_COLS) {
@@ -283,6 +283,7 @@ public class GameBoard implements Cloneable {
 		
 		//save next turn
 		output.write(String.valueOf(turnNum));
+		output.newLine();
 		
 		//close output file
 		output.close();

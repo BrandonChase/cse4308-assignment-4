@@ -16,7 +16,7 @@ public class Node {
 	}
 	
 	public ArrayList<Node> getSuccessors() {
-		ArrayList<Node> successors = new ArrayList<>();
+		ArrayList<Node> successors = new ArrayList<Node>();
 		for(int column = 0; column < GameBoard.NUM_COLS; column++) {
 			if(game.isPlayValid(column)) {
 				GameBoard tempGame = new GameBoard(game);
