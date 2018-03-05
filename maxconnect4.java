@@ -81,13 +81,17 @@ public class maxconnect4 {
 		while(!currentGame.isGameOver()) {
 			if(currentGame.getCurrentTurn() == humanNumber) {
 				currentGame.print();
-				System.out.print("Enter column to play: ");
-				int column = reader.nextInt();
-				if(currentGame.isPlayValid(column)) {
-					currentGame.playPiece(column);
-					currentGame.save("human.txt");
-				} else {
-					System.out.println("Invalid move!");
+				System.out.print("Enter column to play (" + currentGame.turnToString(humanNumber) + "): ");
+				try {
+					int column = Integer.parseInt(reader.next());
+					if(currentGame.isPlayValid(column)) {
+						currentGame.playPiece(column);
+						currentGame.save("human.txt");
+					} else {
+						System.out.println("\n***ERROR: Invalid move!***");
+					}
+				} catch(Exception e) {
+					System.out.println("\n***ERROR: " + e.getMessage() + "***");
 				}
 			} else {
 				currentGame.print();

@@ -293,7 +293,7 @@ public class GameBoard implements Cloneable {
 		return (getNumPieces() == NUM_ROWS * NUM_COLS);
 	}
 	
-	private String turnToString(int turn) {
+	public String turnToString(int turn) {
 		String result;
 		switch(turn) {
 		case 0: //blank space for empty space
