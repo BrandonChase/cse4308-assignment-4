@@ -50,17 +50,16 @@ public class maxconnect4 {
 			
 			//Create game board and AI Player
 			GameBoard currentGame = new GameBoard(inputFileName);
-			AIPlayer ai = new AIPlayer();
 			
 			//Play specified mode 
 			switch(gameMode.toLowerCase()) {
 			case "interactive":
 				String startingPlayer = args[2].toString();
-				playInteractiveMode(currentGame, ai, startingPlayer, depth);
+				playInteractiveMode(currentGame, startingPlayer, depth);
 				break;
 			case "one-move":
 				String outputFileName = args[2].toString();
-				playOneMoveMode(currentGame, ai, outputFileName, depth);
+				playOneMoveMode(currentGame, outputFileName, depth);
 				break;
 			default:
 				System.out.println("ERROR: '" + gameMode + "' is an unsupported game mode! Try again.");
@@ -72,13 +71,15 @@ public class maxconnect4 {
 		}
 	}
 	
-	private static void playInteractiveMode(GameBoard currentGame, AIPlayer ai, String startingPlayer, int depth) throws Exception {
+	private static void playInteractiveMode(GameBoard currentGame, String startingPlayer, int depth) throws Exception {
 		int humanNumber; //values on board are either 1 or 2. based on input file and program arguments, player's value will either be 1 or 2
 		if(startingPlayer.equalsIgnoreCase("human-next")) {
 			humanNumber = currentGame.getCurrentTurn();
 		} else {
-			humanNumber = 3 - currentGame.getCurrentTurn(); //only options are 1 or 2; if turn is 1, 3 - 1 = 2 and if turn is 2, 3 - 2 = 1
+			humanNumber = GameBoard.SUM_TURNS - currentGame.getCurrentTurn(); //only options are 1 or 2; if turn is 1, 3 - 1 = 2 and if turn is 2, 3 - 2 = 1
 		}
+		
+		AIPlayer ai = new AIPlayer(GameBoard.SUM_TURNS - humanNumber, depth);
 		
 		Scanner reader = new Scanner(System.in);
 		while(!currentGame.isGameOver()) {
@@ -94,19 +95,21 @@ public class maxconnect4 {
 				}
 			} else {
 				currentGame.print();
-				currentGame.playPiece(ai.calculateBestPlay(currentGame, depth));
+				currentGame.playPiece(ai.calculateBestPlay(currentGame));
 				currentGame.save("computer.txt");
 			}
 		}
 		
+		currentGame.print();
 		System.out.println("The game is over.");
 		reader.close();
 	}
 	
-	private static void playOneMoveMode(GameBoard currentGame, AIPlayer ai, String outputFileName, int depth) throws Exception {
+	private static void playOneMoveMode(GameBoard currentGame, String outputFileName, int depth) throws Exception {
 		currentGame.print();
 		if(!currentGame.isGameOver()) {
-			ai.calculateBestPlay(currentGame, depth);
+			AIPlayer ai = new AIPlayer(currentGame.getCurrentTurn(), depth);
+			ai.calculateBestPlay(currentGame);
 			currentGame.print();
 		}
 		

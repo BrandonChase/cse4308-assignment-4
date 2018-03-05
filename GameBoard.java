@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Brandon Chase, based on code by James Spargo
@@ -11,10 +12,15 @@ import java.util.ArrayList;
  * game.
  */
 
-public class GameBoard {
+public class GameBoard implements Cloneable {
 	//Board dimensions
 	public static final int NUM_ROWS = 6;
 	public static final int NUM_COLS = 7;
+	public static final int SUM_TURNS = 3; //if player 1 represented by turn number 1 and player 2 represented by turn number 2, sum can be used to get one players number from knowing other
+	public static final int UTILITY1 = 1;
+	public static final int UTILITY2 = 10;
+	public static final int UTILITY3 = 25;
+	public static final int UTILITY4 = 100;
 	
 	//Class fields
 	private int[][] board;
@@ -63,6 +69,20 @@ public class GameBoard {
 		}
 	}
 	
+	public GameBoard(GameBoard otherGame) {
+		this.turnNum = otherGame.turnNum;
+		this.numPieces = otherGame.numPieces;
+		this.board = new int[NUM_ROWS][NUM_COLS];
+		
+		//copy board
+		for(int row = 0; row < NUM_ROWS; row++) {
+			for(int col = 0; col < NUM_COLS; col++)
+			{
+				this.board[row][col] = otherGame.board[row][col];
+			}
+		}
+	}
+	
 	public int calculateScore(int player) {
 		int score = 0;
 		
@@ -98,6 +118,100 @@ public class GameBoard {
 		}
 		
 		return score;
+	}
+	
+	//accounts for completed connect 4s as well as "connect" 1s, 2s, and 3s that have potential to be a connect 4 
+	public int calculateUtility(int playerNumber) {
+		int utility = 0;
+		int enemyNumber = SUM_TURNS - playerNumber; //only options are 1 or 2; if turn is 1, 3 - 1 = 2 and if turn is 2, 3 - 2 = 1
+		
+		for(int row = 0; row < NUM_ROWS; row++) {
+			for(int col = 0; col < NUM_COLS; col++) {
+				ArrayList<Integer> values = new ArrayList<>();
+				
+				//-----check horizontal (3 spaces to right of current space)------
+				if(col + 3 < NUM_COLS) {
+					values.add(board[row][col]);
+					values.add(board[row][col+1]);
+					values.add(board[row][col+2]);
+					values.add(board[row][col+3]);
+					
+					utility = updateUtility(utility, values, playerNumber, enemyNumber);
+				}
+				
+				//check vertical (3 spaces down of current space)
+				if(row + 3 < NUM_ROWS) {
+					values.clear();
+					values.add(board[row][col]);
+					values.add(board[row+1][col]);
+					values.add(board[row+2][col]);
+					values.add(board[row+3][col]);
+					
+					utility = updateUtility(utility, values, playerNumber, enemyNumber);
+				}
+				//check diagonal / (3 spaces down and to left of current space)
+				if(row + 3 < NUM_ROWS && col - 3 >= 0) {
+					values.clear();
+					values.add(board[row][col]);
+					values.add(board[row+1][col-1]);
+					values.add(board[row+2][col-2]);
+					values.add(board[row+3][col-3]);
+					
+					utility = updateUtility(utility, values, playerNumber, enemyNumber);
+				}
+				
+				//check diagonal \ (3 spaces down and to right of current space)
+				if(row + 3 < NUM_ROWS && col + 3 < NUM_COLS) {
+					values.clear();
+					values.add(board[row][col]);
+					values.add(board[row+1][col+1]);
+					values.add(board[row+2][col+2]);
+					values.add(board[row+3][col+3]);
+				
+					utility = updateUtility(utility, values, playerNumber, enemyNumber);
+				}
+			}	
+		}
+		return utility;
+	}
+	
+	private int updateUtility(int utility, ArrayList<Integer> values, int playerNumber, int enemyNumber) {
+		if(!values.contains(enemyNumber)) //if only contains player chips or empty space, contains connect 4 or possible connect 4
+		{
+			int count = Collections.frequency(values, playerNumber);
+			switch(count) {
+			case 1:
+				utility += UTILITY1;
+				break;
+			case 2:
+				utility += UTILITY2;
+				break;
+			case 3:
+				utility += UTILITY3;
+				break;
+			case 4:
+				utility += UTILITY4;
+				break;
+			}
+		} else if(!values.contains(playerNumber)) { //if only contains enemy chips or empty space, contains connect 4 or possible connect 4
+			int count = Collections.frequency(values, enemyNumber);
+			switch(count) {
+			case 1:
+				utility -= UTILITY1;
+				break;
+			case 2:
+				utility -= UTILITY2;
+				break;
+			case 3:
+				utility -= UTILITY3;
+				break;
+			case 4:
+				utility -= UTILITY4;
+				break;
+			}
+		}
+		
+		return utility;
 	}
 	
 	public int getCurrentTurn() {
